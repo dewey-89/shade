@@ -3,6 +3,8 @@ package com.sparta.miniproject.domain.post.service;
 import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.entity.Post;
+import com.sparta.miniproject.domain.post.entity.PostLike;
+import com.sparta.miniproject.domain.post.repository.PostLikeRepository;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.User;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -21,6 +24,7 @@ public class PostService {
 
 
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
 
     // 전체 조회
     public List<PostResponseDto> getPost() {
@@ -71,5 +75,17 @@ public class PostService {
         } else {
             return new ResponseEntity<>("삭제 권한이 없습니다", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    // 게시글 좋아요, 취소
+    public ResponseEntity<String> likePost(Long id, User user) {
+        Post post = findPost(id);
+        Optional<PostLike> like = postLikeRepository.findByPostIdAndUserId(id, user.getId());
+        if (like.isEmpty()) {
+            postLikeRepository.save(new PostLike(user, post));
+            return new ResponseEntity<>("게시글 좋아요", HttpStatus.OK);
+        }
+        postLikeRepository.delete(like.get());
+        return new ResponseEntity<>("게시글 좋아요 취소", HttpStatus.OK);
     }
 }
