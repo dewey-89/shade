@@ -56,4 +56,12 @@ public class PostController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(id, userDetails.getUser());
     }
+
+    // 게시글 좋아요
+    @PutMapping("/post/{id}/like")
+    public ResponseEntity<String> postLike(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.likePost(id, userDetails.getUser());
+    }
 }
