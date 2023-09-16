@@ -3,11 +3,9 @@ package com.sparta.miniproject.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
@@ -29,9 +27,10 @@ public class User {
     private UserRoleEnum role;
 
 
-    public User(String username, String password, UserRoleEnum role) {
+    public User(String username, String password, String nickname, UserRoleEnum role) {
         this.username = username;
         this.password = password;
+        this.nickname = nickname;
         this.role = role;
     }
 }
