@@ -1,13 +1,11 @@
 package com.sparta.miniproject.domain.post.entity;
 
-import com.sparta.miniproject.domain.comment.entity.Comment;
+import com.sparta.miniproject.domain.post.dto.PostRequestDto;
+import com.sparta.miniproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Entity
@@ -15,14 +13,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "posts")
-public class Post {
+public class Post extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String nickname;
 
     @Column(nullable = false)
     private String title;
@@ -30,18 +25,13 @@ public class Post {
     @Column(nullable = false, length = 500)
     private String content;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    // 코멘트 추가 메서드
-    public void addComment(Comment comment) {
-        comments.add(comment);
-        comment.setPost(this);
-    }
-
-
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
-        comment.setPost(null);
+    public Post(PostRequestDto postRequestDto, User user) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+        this.user = user;
     }
 }
