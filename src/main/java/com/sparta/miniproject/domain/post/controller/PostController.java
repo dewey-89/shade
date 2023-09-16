@@ -48,4 +48,12 @@ public class PostController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.updatePost(id, postRequestDto, userDetails.getUser());
     }
+
+    // 게시글 삭제
+    @DeleteMapping("/post/{id}")
+    public ResponseEntity<String> deletePost(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.deletePost(id, userDetails.getUser());
+    }
 }
