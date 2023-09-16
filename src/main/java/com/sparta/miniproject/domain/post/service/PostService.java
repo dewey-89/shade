@@ -5,7 +5,10 @@ import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.entity.Post;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.User;
+import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,5 +39,24 @@ public class PostService {
         Post post = new Post(postRequestDto, user);
         postRepository.save(post);
         return new PostResponseDto(post);
+    }
+
+    // 검색 메소드
+    private Post findPost(Long id) {
+        return postRepository.findPostById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+    }
+
+    // 수정
+    @Transactional
+    public ResponseEntity<String> updatePost(Long id, PostRequestDto postRequestDto, User user) {
+        Post post = findPost(id);
+
+        // 관리자, 유저 권한 확인
+        if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
+            post.update(postRequestDto, user);
+            return new ResponseEntity<>("게시글 수정 완료", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("수정 권한이 없습니다", HttpStatus.UNAUTHORIZED);
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.service.PostService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +38,14 @@ public class PostController {
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.createPost(postRequestDto, userDetails.getUser());
+    }
+
+    // 게시글 수정
+    @PutMapping("/post/{id}")
+    public ResponseEntity<String> updatePost(
+            @PathVariable Long id,
+            @RequestBody PostRequestDto postRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.updatePost(id, postRequestDto, userDetails.getUser());
     }
 }
