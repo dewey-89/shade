@@ -38,12 +38,18 @@ public class UserService {
 
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
+        String email = requestDto.getEmail();
         String nickname = requestDto.getNickname();
 
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        }
+
+        Optional<User> checkEmail = userRepository.findByEmail(email);
+        if (checkEmail.isPresent()) {
+            throw new IllegalArgumentException("중복된 이메일이 존재합니다.");
         }
 
         // 사용자 ROLE 확인
@@ -56,7 +62,7 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(username, password, nickname, role);
+        User user = new User(username, password, email, nickname, role);
         userRepository.save(user);
 
         return ResponseEntity.status(200).body("msg : 회원가입 성공, statusCode : 200");

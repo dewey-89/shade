@@ -19,6 +19,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column(nullable = false)
     private String nickname;
 
@@ -27,9 +30,10 @@ public class User {
     private UserRoleEnum role;
 
 
-    public User(String username, String password, String nickname, UserRoleEnum role) {
+    public User(String username, String password, String email, String nickname, UserRoleEnum role) {
         this.username = username;
         this.password = password;
+        this.email = email;
         this.nickname = nickname;
         this.role = role;
     }
