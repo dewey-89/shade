@@ -25,9 +25,9 @@ public class PostController {
     }
 
     // 게시글 상세 조회
-    @GetMapping("/post/{id}")
-    public PostResponseDto getPostById(@PathVariable Long id) {
-        return postService.getPostById(id);
+    @GetMapping("/post/{postId}")
+    public PostResponseDto getPostById(@PathVariable Long postId) {
+        return postService.getPostById(postId);
     }
 
     // 게시글 작성
@@ -39,27 +39,27 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PutMapping("/post/{id}")
+    @PutMapping("/post/{postId}")
     public ResponseEntity<String> updatePost(
-            @PathVariable Long id,
+            @PathVariable Long postId,
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.updatePost(id, postRequestDto, userDetails.getUser());
+        return postService.updatePost(postId, postRequestDto, userDetails.getUser());
     }
 
     // 게시글 삭제
-    @DeleteMapping("/post/{id}")
+    @DeleteMapping("/post/{postId}")
     public ResponseEntity<String> deletePost(
-            @PathVariable Long id,
+            @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.deletePost(id, userDetails.getUser());
+        return postService.deletePost(postId, userDetails.getUser());
     }
 
     // 게시글 좋아요
-    @PutMapping("/post/{id}/like")
+    @PutMapping("/post/{postId}/like")
     public ResponseEntity<String> likePost(
-            @PathVariable Long id,
+            @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.likePost(id, userDetails.getUser());
+        return postService.likePost(postId, userDetails.getUser());
     }
 }

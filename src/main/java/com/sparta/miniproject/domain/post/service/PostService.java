@@ -31,8 +31,8 @@ public class PostService {
     }
 
     // 상세 조회
-    public PostResponseDto getPostById(Long id) {
-        Post post = postRepository.findPostById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다"));
+    public PostResponseDto getPostById(Long postId) {
+        Post post = postRepository.findPostById(postId).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다"));
         return new PostResponseDto(post);
     }
 
@@ -45,14 +45,14 @@ public class PostService {
     }
 
     // 검색 메소드
-    private Post findPost(Long id) {
-        return postRepository.findPostById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+    private Post findPost(Long postId) {
+        return postRepository.findPostById(postId).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
     }
 
     // 수정
     @Transactional
-    public ResponseEntity<String> updatePost(Long id, PostRequestDto postRequestDto, UserEntity userEntity) {
-        Post post = findPost(id);
+    public ResponseEntity<String> updatePost(Long postId, PostRequestDto postRequestDto, UserEntity userEntity) {
+        Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
         if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
@@ -64,8 +64,8 @@ public class PostService {
     }
 
     // 삭제
-    public ResponseEntity<String> deletePost(Long id, UserEntity userEntity) {
-        Post post = findPost(id);
+    public ResponseEntity<String> deletePost(Long postId, UserEntity userEntity) {
+        Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
         if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
@@ -77,9 +77,9 @@ public class PostService {
     }
 
     // 게시글 좋아요, 취소
-    public ResponseEntity<String> likePost(Long id, UserEntity userEntity) {
-        Post post = findPost(id);
-        Optional<LikePost> like = likePostRepository.findByPostIdAndUserId(id, userEntity.getId());
+    public ResponseEntity<String> likePost(Long postId, UserEntity userEntity) {
+        Post post = findPost(postId);
+        Optional<LikePost> like = likePostRepository.findByPostIdAndUserEntityId(postId, userEntity.getId());
         if (like.isEmpty()) {
             likePostRepository.save(new LikePost(userEntity, post));
             return new ResponseEntity<>("게시글 좋아요", HttpStatus.OK);
