@@ -4,6 +4,7 @@ import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.service.PostService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
+import com.sparta.miniproject.global.entity.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +33,7 @@ public class PostController {
 
     // 게시글 작성
     @PostMapping("/post")
-    public PostResponseDto createPost(
+    public ResponseEntity<ResponseMessage> createPost(
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.createPost(postRequestDto, userDetails.getUser());
@@ -40,7 +41,7 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping("/post/{postId}")
-    public ResponseEntity<String> updatePost(
+    public ResponseEntity<ResponseMessage> updatePost(
             @PathVariable Long postId,
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -49,7 +50,7 @@ public class PostController {
 
     // 게시글 삭제
     @DeleteMapping("/post/{postId}")
-    public ResponseEntity<String> deletePost(
+    public ResponseEntity<ResponseMessage> deletePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(postId, userDetails.getUser());
@@ -57,7 +58,7 @@ public class PostController {
 
     // 게시글 좋아요
     @PutMapping("/post/{postId}/like")
-    public ResponseEntity<String> likePost(
+    public ResponseEntity<ResponseMessage> likePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.likePost(postId, userDetails.getUser());
