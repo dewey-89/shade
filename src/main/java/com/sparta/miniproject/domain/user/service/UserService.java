@@ -1,7 +1,7 @@
 package com.sparta.miniproject.domain.user.service;
 
 import com.sparta.miniproject.domain.user.dto.SignupRequestDto;
-import com.sparta.miniproject.domain.user.entity.User;
+import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,12 +42,12 @@ public class UserService {
         String nickname = requestDto.getNickname();
 
         // 회원 중복 확인
-        Optional<User> checkUsername = userRepository.findByUsername(username);
+        Optional<UserEntity> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-        Optional<User> checkEmail = userRepository.findByEmail(email);
+        Optional<UserEntity> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
             throw new IllegalArgumentException("중복된 이메일이 존재합니다.");
         }
@@ -62,8 +62,8 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(username, password, email, nickname, role);
-        userRepository.save(user);
+        UserEntity userEntity = new UserEntity(username, password, email, nickname, role);
+        userRepository.save(userEntity);
 
         return ResponseEntity.status(200).body("msg : 회원가입 성공, statusCode : 200");
 

@@ -1,6 +1,6 @@
 package com.sparta.miniproject.domain.post.entity;
 
-import com.sparta.miniproject.domain.user.entity.User;
+import com.sparta.miniproject.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,14 +18,14 @@ public class PostLike {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    public PostLike(User user, Post post) {
-        this.user = user;
+    public PostLike(UserEntity userEntity, Post post) {
+        this.userEntity = userEntity;
         this.post = post;
     }
 }

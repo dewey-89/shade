@@ -18,6 +18,8 @@ public class SignupRequestDto {
     private String password;
 
     @NotBlank
+    // 정규식이 좋은지? @Email 어노테이션을 쓰는게 좋은지?
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "이메일 형식에 맞게 입력해주세요.")
     private String email;
 
     @NotBlank

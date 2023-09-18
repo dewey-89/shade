@@ -4,7 +4,6 @@ import com.sparta.miniproject.domain.post.entity.Post;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @Getter
 public class PostResponseDto {
@@ -23,7 +22,7 @@ public class PostResponseDto {
     public PostResponseDto(Post post) {
         this.id = post.getId();
 
-        this.nickname = post.getUser().getNickname();
+        this.nickname = post.getUserEntity().getNickname();
         this.title = post.getTitle();
         this.content = post.getContent();
 

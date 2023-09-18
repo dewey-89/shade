@@ -6,7 +6,7 @@ import com.sparta.miniproject.domain.post.entity.Post;
 import com.sparta.miniproject.domain.post.entity.PostLike;
 import com.sparta.miniproject.domain.post.repository.PostLikeRepository;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
-import com.sparta.miniproject.domain.user.entity.User;
+import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,8 +39,8 @@ public class PostService {
 
     // 생성
     @Transactional
-    public PostResponseDto createPost(PostRequestDto postRequestDto, User user) {
-        Post post = new Post(postRequestDto, user);
+    public PostResponseDto createPost(PostRequestDto postRequestDto, UserEntity userEntity) {
+        Post post = new Post(postRequestDto, userEntity);
         postRepository.save(post);
         return new PostResponseDto(post);
     }
@@ -52,12 +52,12 @@ public class PostService {
 
     // 수정
     @Transactional
-    public ResponseEntity<String> updatePost(Long id, PostRequestDto postRequestDto, User user) {
+    public ResponseEntity<String> updatePost(Long id, PostRequestDto postRequestDto, UserEntity userEntity) {
         Post post = findPost(id);
 
         // 관리자, 유저 권한 확인
-        if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
-            post.update(postRequestDto, user);
+        if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
+            post.update(postRequestDto, userEntity);
             return new ResponseEntity<>("게시글 수정 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("수정 권한이 없습니다", HttpStatus.UNAUTHORIZED);
@@ -65,11 +65,11 @@ public class PostService {
     }
 
     // 삭제
-    public ResponseEntity<String> deletePost(Long id, User user) {
+    public ResponseEntity<String> deletePost(Long id, UserEntity userEntity) {
         Post post = findPost(id);
 
         // 관리자, 유저 권한 확인
-        if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
+        if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
             postRepository.delete(post);
             return new ResponseEntity<>("게시글 삭제 완료", HttpStatus.OK);
         } else {
@@ -78,11 +78,11 @@ public class PostService {
     }
 
     // 게시글 좋아요, 취소
-    public ResponseEntity<String> likePost(Long id, User user) {
+    public ResponseEntity<String> likePost(Long id, UserEntity userEntity) {
         Post post = findPost(id);
-        Optional<PostLike> like = postLikeRepository.findByPostIdAndUserId(id, user.getId());
+        Optional<PostLike> like = postLikeRepository.findByPostIdAndUserId(id, userEntity.getId());
         if (like.isEmpty()) {
-            postLikeRepository.save(new PostLike(user, post));
+            postLikeRepository.save(new PostLike(userEntity, post));
             return new ResponseEntity<>("게시글 좋아요", HttpStatus.OK);
         }
         postLikeRepository.delete(like.get());

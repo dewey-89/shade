@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "users")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,7 +30,7 @@ public class User {
     private UserRoleEnum role;
 
 
-    public User(String username, String password, String email, String nickname, UserRoleEnum role) {
+    public UserEntity(String username, String password, String email, String nickname, UserRoleEnum role) {
         this.username = username;
         this.password = password;
         this.email = email;
