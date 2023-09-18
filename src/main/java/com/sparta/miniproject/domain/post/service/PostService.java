@@ -3,8 +3,8 @@ package com.sparta.miniproject.domain.post.service;
 import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.entity.Post;
-import com.sparta.miniproject.domain.post.entity.PostLike;
-import com.sparta.miniproject.domain.post.repository.PostLikeRepository;
+import com.sparta.miniproject.domain.post.entity.LikePost;
+import com.sparta.miniproject.domain.post.repository.LikePostRepository;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
@@ -22,9 +22,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
 
-
     private final PostRepository postRepository;
-    private final PostLikeRepository postLikeRepository;
+    private final LikePostRepository likePostRepository;
 
     // 전체 조회
     public List<PostResponseDto> getPost() {
@@ -80,12 +79,12 @@ public class PostService {
     // 게시글 좋아요, 취소
     public ResponseEntity<String> likePost(Long id, UserEntity userEntity) {
         Post post = findPost(id);
-        Optional<PostLike> like = postLikeRepository.findByPostIdAndUserId(id, userEntity.getId());
+        Optional<LikePost> like = likePostRepository.findByPostIdAndUserId(id, userEntity.getId());
         if (like.isEmpty()) {
-            postLikeRepository.save(new PostLike(userEntity, post));
+            likePostRepository.save(new LikePost(userEntity, post));
             return new ResponseEntity<>("게시글 좋아요", HttpStatus.OK);
         }
-        postLikeRepository.delete(like.get());
+        likePostRepository.delete(like.get());
         return new ResponseEntity<>("게시글 좋아요 취소", HttpStatus.OK);
     }
 }

@@ -1,4 +1,4 @@
-package com.sparta.miniproject.domain.post.entity;
+package com.sparta.miniproject.global.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

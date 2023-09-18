@@ -4,6 +4,7 @@ import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.service.PostService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class PostController {
 
     private final PostService postService;
-
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     // 게시글 전체 조회
     @GetMapping("/post")
@@ -59,7 +57,7 @@ public class PostController {
 
     // 게시글 좋아요
     @PutMapping("/post/{id}/like")
-    public ResponseEntity<String> postLike(
+    public ResponseEntity<String> likePost(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.likePost(id, userDetails.getUser());

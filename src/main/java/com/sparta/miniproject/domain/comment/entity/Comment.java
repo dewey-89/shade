@@ -3,7 +3,7 @@ package com.sparta.miniproject.domain.comment.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.miniproject.domain.comment.dto.CommentRequestDto;
 import com.sparta.miniproject.domain.post.entity.Post;
-import com.sparta.miniproject.domain.post.entity.Timestamped;
+import com.sparta.miniproject.global.entity.Timestamped;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;

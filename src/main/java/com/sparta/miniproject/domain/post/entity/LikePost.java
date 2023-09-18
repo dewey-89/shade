@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "post_likes")
 @NoArgsConstructor
-public class PostLike {
+public class LikePost {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class PostLike {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    public PostLike(UserEntity userEntity, Post post) {
+    public LikePost(UserEntity userEntity, Post post) {
         this.userEntity = userEntity;
         this.post = post;
     }

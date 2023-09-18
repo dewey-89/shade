@@ -3,6 +3,7 @@ package com.sparta.miniproject.domain.post.entity;
 import com.sparta.miniproject.domain.comment.entity.Comment;
 import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
+import com.sparta.miniproject.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "posts")
-public class Post extends Timestamped{
+public class Post extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +38,7 @@ public class Post extends Timestamped{
     private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<PostLike> postLikeList = new ArrayList<>();
+    private List<LikePost> likePostList = new ArrayList<>();
 
 
     public Post(PostRequestDto postRequestDto, UserEntity userEntity) {

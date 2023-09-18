@@ -4,8 +4,10 @@ import com.sparta.miniproject.domain.user.dto.SignupRequestDto;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.domain.user.repository.UserRepository;
+import com.sparta.miniproject.global.entity.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,18 +23,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+    @Value("${admin.token}")
+    private String ADMIN_TOKEN;
+    public ResponseEntity<ResponseMessage> signup(SignupRequestDto requestDto, BindingResult bindingResult) {
 
-    public ResponseEntity<String> signup(SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if (fieldErrors.size() > 0) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-                return new ResponseEntity<>("상태코드 : " + HttpStatus.BAD_REQUEST.value() + ", 메세지 : " + fieldError.getDefaultMessage(), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ResponseMessage(HttpStatus.BAD_REQUEST.value(),
+                        fieldError.getDefaultMessage()), HttpStatus.BAD_REQUEST);
             }
         }
 
@@ -44,12 +48,19 @@ public class UserService {
         // 회원 중복 확인
         Optional<UserEntity> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            throw new IllegalArgumentException("중복된 아이디가 존재합니다.");
         }
 
+        // 이메일 중복 확인
         Optional<UserEntity> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
             throw new IllegalArgumentException("중복된 이메일이 존재합니다.");
+        }
+
+        //닉네임 중복 확인
+        Optional<UserEntity> checkNickname = userRepository.findByNickname(nickname);
+        if (checkNickname.isPresent()) {
+            throw new IllegalArgumentException("중복된 닉네임이 존재합니다.");
         }
 
         // 사용자 ROLE 확인
@@ -62,10 +73,11 @@ public class UserService {
         }
 
         // 사용자 등록
-        UserEntity userEntity = new UserEntity(username, password, email, nickname, role);
-        userRepository.save(userEntity);
+        UserEntity use = new UserEntity(username, password, email, nickname, role);
+        userRepository.save(use);
 
-        return ResponseEntity.status(200).body("msg : 회원가입 성공, statusCode : 200");
+        ResponseMessage message = new ResponseMessage(HttpStatus.CREATED.value(), " 회원가입 성공");
+        return ResponseEntity.status(201).body(message);
 
     }
 }
