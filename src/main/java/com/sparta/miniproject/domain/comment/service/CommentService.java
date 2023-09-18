@@ -42,7 +42,8 @@ public class CommentService {
             // 댓글 작성자 또는 관리자 권한 확인
             if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(comment.getUser().getId())) {
                 comment.updateComment(commentRequestDto, user);
-                return new CommentResponseDto("댓글 수정이 완료되었습니다.");
+                commentRepository.save(comment);
+                return new CommentResponseDto(comment);
             } else {
                 throw new UnauthorizedException("댓글 수정 권한이 없습니다.");
             }
