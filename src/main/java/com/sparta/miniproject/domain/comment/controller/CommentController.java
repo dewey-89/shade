@@ -31,6 +31,13 @@ public class CommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.updateComment(commentId, updatedCommentDto, userDetails.getUser());
     }
+    // 3. 댓글 삭제 API
+    @DeleteMapping("/comment/{commentId}")
+    public CommentResponseDto deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.deleteComment(commentId, userDetails.getUser());
+    }
 
 }
 

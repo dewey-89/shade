@@ -55,5 +55,21 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("댓글이 존재하지 않습니다."));
     }
 
+
+    //삭제
+    @Transactional
+    public CommentResponseDto deleteComment(Long id, User user) {
+        Comment comment = findComment(id);
+
+        // 댓글 작성자 또는 관리자 권한 확인
+        if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(comment.getUser().getId())) {
+            // 댓글 삭제
+            commentRepository.delete(comment);
+            return new CommentResponseDto(comment);
+        } else {
+            throw new UnauthorizedException("댓글 삭제 권한이 없습니다.");
+        }
+    }
+
 }
 
