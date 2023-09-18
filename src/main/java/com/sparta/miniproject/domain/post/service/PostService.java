@@ -8,6 +8,7 @@ import com.sparta.miniproject.domain.post.repository.LikePostRepository;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
+import com.sparta.miniproject.global.entity.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,10 +39,10 @@ public class PostService {
 
     // 생성
     @Transactional
-    public PostResponseDto createPost(PostRequestDto postRequestDto, UserEntity userEntity) {
-        Post post = new Post(postRequestDto, userEntity);
-        postRepository.save(post);
-        return new PostResponseDto(post);
+    public ResponseEntity<ResponseMessage> createPost(PostRequestDto postRequestDto, UserEntity userEntity) {
+        Post post = postRepository.save(new Post(postRequestDto, userEntity));
+        ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 작성 완료");
+        return ResponseEntity.status(200).body(message);
     }
 
     // 검색 메소드
@@ -51,40 +52,42 @@ public class PostService {
 
     // 수정
     @Transactional
-    public ResponseEntity<String> updatePost(Long postId, PostRequestDto postRequestDto, UserEntity userEntity) {
+    public ResponseEntity<ResponseMessage> updatePost(Long postId, PostRequestDto postRequestDto, UserEntity userEntity) {
         Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
         if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
             post.update(postRequestDto, userEntity);
-            return new ResponseEntity<>("게시글 수정 완료", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("수정 권한이 없습니다", HttpStatus.UNAUTHORIZED);
+            ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 수정 완료");
         }
+            return ResponseEntity.status(401).body(new ResponseMessage(HttpStatus.UNAUTHORIZED.value(), "수정 권한이 없습니다"));
+
     }
 
     // 삭제
-    public ResponseEntity<String> deletePost(Long postId, UserEntity userEntity) {
+    public ResponseEntity<ResponseMessage> deletePost(Long postId, UserEntity userEntity) {
         Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
         if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
             postRepository.delete(post);
-            return new ResponseEntity<>("게시글 삭제 완료", HttpStatus.OK);
+            ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 삭제 완료");
+            return ResponseEntity.status(200).body(message);
         } else {
-            return new ResponseEntity<>("삭제 권한이 없습니다", HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(401).body(new ResponseMessage(HttpStatus.UNAUTHORIZED.value(), "삭제 권한이 없습니다"));
         }
     }
 
     // 게시글 좋아요, 취소
-    public ResponseEntity<String> likePost(Long postId, UserEntity userEntity) {
+    public ResponseEntity<ResponseMessage> likePost(Long postId, UserEntity userEntity) {
         Post post = findPost(postId);
         Optional<LikePost> like = likePostRepository.findByPostIdAndUserEntityId(postId, userEntity.getId());
         if (like.isEmpty()) {
             likePostRepository.save(new LikePost(userEntity, post));
-            return new ResponseEntity<>("게시글 좋아요", HttpStatus.OK);
+            ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 좋아요");
+            return ResponseEntity.status(200).body(message);
         }
         likePostRepository.delete(like.get());
-        return new ResponseEntity<>("게시글 좋아요 취소", HttpStatus.OK);
+        return ResponseEntity.status(200).body(new ResponseMessage(HttpStatus.OK.value(), "게시글 좋아요 취소"));
     }
 }
