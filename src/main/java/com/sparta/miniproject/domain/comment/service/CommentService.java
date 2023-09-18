@@ -9,8 +9,8 @@ import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.User;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
