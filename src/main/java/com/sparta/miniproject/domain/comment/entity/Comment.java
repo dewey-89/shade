@@ -39,7 +39,7 @@ public class Comment extends Timestamped {
     }
 
 
-    public void updateComment(CommentRequestDto commentRequestDto, UserEntity userEntity) {
+    public void updateComment(CommentRequestDto commentRequestDto) {
         this.comment = commentRequestDto.getComment();
     }
 }
