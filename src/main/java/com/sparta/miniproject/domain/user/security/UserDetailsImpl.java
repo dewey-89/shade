@@ -1,6 +1,6 @@
 package com.sparta.miniproject.domain.user.security;
 
-import com.sparta.miniproject.domain.user.entity.User;
+import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,29 +11,29 @@ import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private final UserEntity userEntity;
 
-    public UserDetailsImpl(User user) {
-        this.user = user;
+    public UserDetailsImpl(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
-    public User getUser() {
-        return user;
+    public UserEntity getUser() {
+        return userEntity;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return userEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return userEntity.getUsername();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        UserRoleEnum role = user.getRole();
+        UserRoleEnum role = userEntity.getRole();
         String authority = role.getAuthority();
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
