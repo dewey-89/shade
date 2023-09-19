@@ -20,9 +20,7 @@ public class CommentController {
     private final CommentService commentService;
 
     // 1. 댓글 작성 API
-    @Operation(summary = "댓글 생성",
-            responses = {
-                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+    @Operation(summary = "댓글 작성")
     @PostMapping("/comment")
     public ResponseEntity<CommentResponseDto> createComment(
             @RequestBody CommentRequestDto commentRequestDto,
@@ -31,6 +29,7 @@ public class CommentController {
     }
 
     // 2. 댓글 수정 API
+    @Operation(summary = "댓글 수정")
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable Long commentId,
@@ -39,6 +38,7 @@ public class CommentController {
         return commentService.updateComment(commentId, updatedCommentDto, userDetails.getUser());
     }
     // 3. 댓글 삭제 API
+    @Operation(summary = "댓글 삭제")
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<ResponseMessage> deleteComment(
             @PathVariable Long commentId,

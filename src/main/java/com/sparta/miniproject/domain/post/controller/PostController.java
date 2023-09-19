@@ -57,6 +57,7 @@ public class PostController {
     }
 
     // 게시글 좋아요
+    @Operation(summary = "게시글 좋아요/취소")
     @PutMapping("/post/{postId}/like")
     public ResponseEntity<ResponseMessage> likePost(
             @PathVariable Long postId,
