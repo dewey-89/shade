@@ -24,7 +24,7 @@ public class Comment extends Timestamped {
     private String comment;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "user_id",nullable = false)
     private UserEntity userEntity;
 
     @JsonIgnore

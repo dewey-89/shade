@@ -1,4 +1,4 @@
-package com.sparta.miniproject.global.entity;
+package com.sparta.miniproject.global.dto;
 
 import lombok.Getter;
 

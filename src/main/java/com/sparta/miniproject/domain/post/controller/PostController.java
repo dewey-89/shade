@@ -4,7 +4,7 @@ import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.service.PostService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
-import com.sparta.miniproject.global.entity.ResponseMessage;
+import com.sparta.miniproject.global.dto.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

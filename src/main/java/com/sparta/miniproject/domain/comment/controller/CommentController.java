@@ -4,7 +4,9 @@ import com.sparta.miniproject.domain.comment.dto.CommentRequestDto;
 import com.sparta.miniproject.domain.comment.dto.CommentResponseDto;
 import com.sparta.miniproject.domain.comment.service.CommentService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
-import com.sparta.miniproject.global.entity.ResponseMessage;
+import com.sparta.miniproject.global.dto.ResponseMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +20,9 @@ public class CommentController {
     private final CommentService commentService;
 
     // 1. 댓글 작성 API
+    @Operation(summary = "댓글 생성",
+            responses = {
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PostMapping("/comment")
     public ResponseEntity<CommentResponseDto> createComment(
             @RequestBody CommentRequestDto commentRequestDto,
