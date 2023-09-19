@@ -8,7 +8,7 @@ import com.sparta.miniproject.domain.post.entity.Post;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
-import com.sparta.miniproject.global.entity.ResponseMessage;
+import com.sparta.miniproject.global.dto.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

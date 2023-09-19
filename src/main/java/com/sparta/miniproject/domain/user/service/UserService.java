@@ -4,7 +4,7 @@ import com.sparta.miniproject.domain.user.dto.SignupRequestDto;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.domain.user.repository.UserRepository;
-import com.sparta.miniproject.global.entity.ResponseMessage;
+import com.sparta.miniproject.global.dto.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
