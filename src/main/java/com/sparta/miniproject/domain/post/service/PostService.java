@@ -10,12 +10,13 @@ import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.global.dto.ResponseMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -27,8 +28,8 @@ public class PostService {
     private final LikePostRepository likePostRepository;
 
     // 전체 조회
-    public List<PostResponseDto> getPost() {
-        return postRepository.findAllByOrderByModifiedAtDesc().stream().map(PostResponseDto::new).toList();
+    public Page<String> getPost() {
+        return postRepository.findTitles(Pageable.ofSize(5));
     }
 
     // 상세 조회
@@ -59,6 +60,7 @@ public class PostService {
         if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
             post.update(postRequestDto, userEntity);
             ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 수정 완료");
+            return ResponseEntity.status(200).body(message);
         }
             return ResponseEntity.status(401).body(new ResponseMessage(HttpStatus.UNAUTHORIZED.value(), "수정 권한이 없습니다"));
 
