@@ -15,6 +15,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j(topic = "로그인 및 JWT 생성")//로그인 및 JWT 생성
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -51,7 +53,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
-        response.setContentType("text/plain");
+        // JSON으로 변환하여 응답
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(ApiResponse.success("로그인 성공"));
+
+        response.setContentType("application/json");//응답 형식 지정
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(jsonResponse);
 
