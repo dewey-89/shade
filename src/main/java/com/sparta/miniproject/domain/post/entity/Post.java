@@ -35,7 +35,7 @@ public class Post extends Timestamped {
     private UserEntity userEntity;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<Comment> commentList = new ArrayList<>();
+    private List<Comment> commentsList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<LikePost> likePostList = new ArrayList<>();
