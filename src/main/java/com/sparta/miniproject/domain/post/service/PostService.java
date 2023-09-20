@@ -2,13 +2,13 @@ package com.sparta.miniproject.domain.post.service;
 
 import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
-import com.sparta.miniproject.domain.post.entity.Post;
 import com.sparta.miniproject.domain.post.entity.LikePost;
+import com.sparta.miniproject.domain.post.entity.Post;
 import com.sparta.miniproject.domain.post.repository.LikePostRepository;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
-import com.sparta.miniproject.global.dto.ResponseMessage;
+import com.sparta.miniproject.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,68 +28,66 @@ public class PostService {
     private final LikePostRepository likePostRepository;
 
     // 전체 조회
-    public Page<String> getPost() {
-        return postRepository.findTitles(Pageable.ofSize(5));
+    public ResponseEntity<ApiResponse<Page<String>>> getPost() {
+        Page<String> postList = postRepository.findTitles(Pageable.ofSize(5));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(postList));
     }
 
     // 상세 조회
-    public PostResponseDto getPostById(Long postId) {
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다"));
-        return new PostResponseDto(post);
+    public ResponseEntity<ApiResponse<PostResponseDto>> getPostById(Long postId) {
+        Post post = postRepository.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new PostResponseDto(post)));
     }
 
     // 생성
     @Transactional
-    public ResponseEntity<ResponseMessage> createPost(PostRequestDto postRequestDto, UserEntity userEntity) {
+    public ResponseEntity<ApiResponse<PostResponseDto>> createPost(PostRequestDto postRequestDto, UserEntity userEntity) {
         Post post = postRepository.save(new Post(postRequestDto, userEntity));
-        ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 작성 완료");
-        return ResponseEntity.status(200).body(message);
-    }
-
-    // 검색 메소드
-    private Post findPost(Long postId) {
-        return postRepository.findPostById(postId).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new PostResponseDto(post)));
     }
 
     // 수정
     @Transactional
-    public ResponseEntity<ResponseMessage> updatePost(Long postId, PostRequestDto postRequestDto, UserEntity userEntity) {
+    public ResponseEntity<ApiResponse<PostResponseDto>> updatePost(Long postId, PostRequestDto postRequestDto, UserEntity userEntity) {
         Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
-        if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
-            post.update(postRequestDto, userEntity);
-            ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 수정 완료");
-            return ResponseEntity.status(200).body(message);
+        if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId()))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("수정 권한이 없습니다"));
         }
-            return ResponseEntity.status(401).body(new ResponseMessage(HttpStatus.UNAUTHORIZED.value(), "수정 권한이 없습니다"));
+        post.update(postRequestDto, userEntity);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new PostResponseDto(post)));
 
     }
 
     // 삭제
-    public ResponseEntity<ResponseMessage> deletePost(Long postId, UserEntity userEntity) {
+    @Transactional
+    public ResponseEntity<ApiResponse<String>> deletePost(Long postId, UserEntity userEntity) {
         Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
-        if (userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId())) {
-            postRepository.delete(post);
-            ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 삭제 완료");
-            return ResponseEntity.status(200).body(message);
-        } else {
-            return ResponseEntity.status(401).body(new ResponseMessage(HttpStatus.UNAUTHORIZED.value(), "삭제 권한이 없습니다"));
+        if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId()))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("삭제 권한이 없습니다"));
         }
+        postRepository.delete(post);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("게시글이 삭제되었습니다"));
     }
 
     // 게시글 좋아요, 취소
-    public ResponseEntity<ResponseMessage> likePost(Long postId, UserEntity userEntity) {
+    @Transactional
+    public ResponseEntity<ApiResponse<String>> likePost(Long postId, UserEntity userEntity) {
         Post post = findPost(postId);
         Optional<LikePost> like = likePostRepository.findByPostIdAndUserEntityId(postId, userEntity.getId());
         if (like.isEmpty()) {
             likePostRepository.save(new LikePost(userEntity, post));
-            ResponseMessage message = new ResponseMessage(HttpStatus.OK.value(), "게시글 좋아요");
-            return ResponseEntity.status(200).body(message);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("게시글 좋아요"));
         }
         likePostRepository.delete(like.get());
-        return ResponseEntity.status(200).body(new ResponseMessage(HttpStatus.OK.value(), "게시글 좋아요 취소"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("게시글 취소"));
+    }
+
+    // 검색 메소드
+    private Post findPost(Long postId) {
+        return postRepository.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     }
 }

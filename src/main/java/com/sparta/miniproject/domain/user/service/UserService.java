@@ -4,7 +4,7 @@ import com.sparta.miniproject.domain.user.dto.SignupRequestDto;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.domain.user.repository.UserRepository;
-import com.sparta.miniproject.global.dto.ResponseMessage;
+import com.sparta.miniproject.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,15 +28,13 @@ public class UserService {
 
     @Value("${admin.token}")
     private String ADMIN_TOKEN;
-    public ResponseEntity<ResponseMessage> signup(SignupRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<String>> signup(SignupRequestDto requestDto, BindingResult bindingResult) {
 
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if (fieldErrors.size() > 0) {
+        if (!fieldErrors.isEmpty()) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-                return new ResponseEntity<>(new ResponseMessage(HttpStatus.BAD_REQUEST.value(),
-                        fieldError.getDefaultMessage()), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ApiResponse.error(fieldError.getDefaultMessage()));
             }
         }
 
@@ -48,36 +46,35 @@ public class UserService {
         // 회원 중복 확인
         Optional<UserEntity> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 아이디가 존재합니다.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("중복된 회원이 존재합니다."));
         }
 
         // 이메일 중복 확인
         Optional<UserEntity> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 이메일이 존재합니다.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("중복된 이메일이 존재합니다."));
         }
 
         //닉네임 중복 확인
         Optional<UserEntity> checkNickname = userRepository.findByNickname(nickname);
         if (checkNickname.isPresent()) {
-            throw new IllegalArgumentException("중복된 닉네임이 존재합니다.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("중복된 닉네임이 존재합니다."));
         }
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
         if (requestDto.isAdmin()) {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("관리자 토큰이 일치하지 않습니다."));
             }
             role = UserRoleEnum.ADMIN;
         }
 
         // 사용자 등록
-        UserEntity use = new UserEntity(username, password, email, nickname, role);
-        userRepository.save(use);
+        UserEntity userEntity = new UserEntity(username, password, email, nickname, role);
+        userRepository.save(userEntity);
 
-        ResponseMessage message = new ResponseMessage(HttpStatus.CREATED.value(), " 회원가입 성공");
-        return ResponseEntity.status(201).body(message);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("회원가입이 완료되었습니다."));
 
     }
 }
