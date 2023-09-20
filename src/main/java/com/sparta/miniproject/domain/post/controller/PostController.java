@@ -4,7 +4,7 @@ import com.sparta.miniproject.domain.post.dto.PostRequestDto;
 import com.sparta.miniproject.domain.post.dto.PostResponseDto;
 import com.sparta.miniproject.domain.post.service.PostService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
-import com.sparta.miniproject.global.dto.ResponseMessage;
+import com.sparta.miniproject.global.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,29 +14,29 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/posts")
 public class PostController {
 
     private final PostService postService;
 
     // 게시글 전체 조회
     @Operation(summary = "게시글 전체 조회")
-    @GetMapping("/post")
-    public Page<String> getPost() {
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<String>>> getPost() {
         return postService.getPost();
     }
 
     // 게시글 상세 조회
     @Operation(summary = "게시글 상세 조회")
-    @GetMapping("/post/{postId}")
-    public PostResponseDto getPostById(@PathVariable Long postId) {
+    @GetMapping("/{postId}")
+    public ResponseEntity<ApiResponse<PostResponseDto>> getPostById(@PathVariable Long postId) {
         return postService.getPostById(postId);
     }
 
     // 게시글 작성
     @Operation(summary = "게시글 작성")
-    @PostMapping("/post")
-    public ResponseEntity<ResponseMessage> createPost(
+    @PostMapping
+    public ResponseEntity<ApiResponse<PostResponseDto>> createPost(
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.createPost(postRequestDto, userDetails.getUser());
@@ -44,8 +44,8 @@ public class PostController {
 
     // 게시글 수정
     @Operation(summary = "게시글 수정")
-    @PutMapping("/post/{postId}")
-    public ResponseEntity<ResponseMessage> updatePost(
+    @PutMapping("/{postId}")
+    public ResponseEntity<ApiResponse<PostResponseDto>> updatePost(
             @PathVariable Long postId,
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -54,8 +54,8 @@ public class PostController {
 
     // 게시글 삭제
     @Operation(summary = "게시글 삭제")
-    @DeleteMapping("/post/{postId}")
-    public ResponseEntity<ResponseMessage> deletePost(
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponse<String>> deletePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(postId, userDetails.getUser());
@@ -63,8 +63,8 @@ public class PostController {
 
     // 게시글 좋아요
     @Operation(summary = "게시글 좋아요/취소")
-    @PutMapping("/post/{postId}/like")
-    public ResponseEntity<ResponseMessage> likePost(
+    @PutMapping("/{postId}/like")
+    public ResponseEntity<ApiResponse<String>> likePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.likePost(postId, userDetails.getUser());

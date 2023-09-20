@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.miniproject.domain.user.dto.LoginRequestDto;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.domain.user.jwt.JwtUtil;
+import com.sparta.miniproject.global.dto.ApiResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +22,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/users/login");
     }
 
     @Override//로그인 시도시 실행되는 함수
@@ -52,15 +53,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("msg : 로그인 성공, statusCode : 200");
+        response.getWriter().write(jsonResponse);
+
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException{
+        // JSON으로 변환하여 응답
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(ApiResponse.error("로그인 실패"));
+
         response.setStatus(401);
-        response.setContentType("text/plain");
+        response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("msg : 로그인 실패, statusCode : 401");
+        response.getWriter().write(jsonResponse);
     }
 
 }
