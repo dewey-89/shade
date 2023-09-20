@@ -7,11 +7,10 @@ import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
 import com.sparta.miniproject.global.dto.ResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ public class PostController {
     // 게시글 전체 조회
     @Operation(summary = "게시글 전체 조회")
     @GetMapping("/post")
-    public List<PostResponseDto> getPost() {
+    public Page<String> getPost() {
         return postService.getPost();
     }
 
