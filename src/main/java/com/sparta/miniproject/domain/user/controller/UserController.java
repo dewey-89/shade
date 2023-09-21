@@ -33,7 +33,7 @@ public class UserController {
         return userService.signup(signupRequestDto,bindingResult);
     }
 
-    @PostMapping("/mailConfirm")
+    @PostMapping("/mailSend") // 이메일 인증 코드 전송
     public String mailConfirm(@RequestBody EmailAuthRequestDto emailDto) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = emailService.sendEmail(emailDto.getEmail());
