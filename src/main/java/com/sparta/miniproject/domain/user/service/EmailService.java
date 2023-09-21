@@ -1,8 +1,12 @@
 package com.sparta.miniproject.domain.user.service;
 
+import com.sparta.miniproject.domain.user.dto.EmailAuthRequestDto;
+import com.sparta.miniproject.domain.user.entity.EmailVerification;
+import com.sparta.miniproject.domain.user.repository.EmailVerificationRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.Store;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -20,6 +24,8 @@ public class EmailService {
     // 타임리프를사용하기 위한 객체를 의존성 주입으로 가져온다
     private final SpringTemplateEngine templateEngine;
     private String authNum; //랜덤 인증 코드
+    private final EmailVerificationRepository emailVerificationRepository; // 주입
+
 
     //랜덤 인증 코드 생성
     public void createCode() {
@@ -44,19 +50,31 @@ public class EmailService {
         authNum = key.toString();
     }
 
+
+    // EmailVerification 엔터티 생성 및 저장하는 메서드
+    private void saveEmailVerification(String email, String verificationCode) {
+        EmailVerification emailVerification = new EmailVerification(email, verificationCode);
+        emailVerificationRepository.save(emailVerification);
+    }
+
+
     //메일 양식 작성
     public MimeMessage createEmailForm(String email) throws MessagingException, UnsupportedEncodingException {
 
         createCode(); //인증 코드 생성
-        String setFrom = "ksw270@gmail.com"; //email-config에 설정한 자신의 이메일 주소(보내는 사람)
+        String setFrom = "jaeha0183@gmail.com"; //email-config에 설정한 자신의 이메일 주소(보내는 사람)
         String toEmail = email; //받는 사람
-        String title = "칸반보드 회원가입 인증 번호"; //제목
+        String title = "CODEBOX 회원가입 인증 번호"; //제목
 
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email); //보낼 이메일 설정
         message.setSubject(title); //제목 설정
         message.setFrom(setFrom); //보내는 이메일
         message.setText(setContext(authNum), "utf-8", "html");
+
+        // EmailVerification 엔터티 생성 및 저장
+        saveEmailVerification(email, authNum);
+
 
         return message;
     }
