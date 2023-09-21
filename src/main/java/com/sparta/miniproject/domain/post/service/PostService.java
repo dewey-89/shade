@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -28,8 +29,8 @@ public class PostService {
     private final LikePostRepository likePostRepository;
 
     // 전체 조회
-    public ResponseEntity<ApiResponse<Page<String>>> getPost() {
-        Page<String> postList = postRepository.findTitles(Pageable.ofSize(5));
+    public ResponseEntity<ApiResponse<List<PostResponseDto>>> getPost() {
+        List<PostResponseDto> postList = postRepository.findTitles();
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(postList));
     }
 
