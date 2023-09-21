@@ -1,18 +1,23 @@
 package com.sparta.miniproject.domain.user.service;
 
 import com.sparta.miniproject.domain.user.dto.EmailAuthRequestDto;
+import com.sparta.miniproject.domain.user.dto.EmailVerificationRequestDto;
+import com.sparta.miniproject.domain.user.dto.EmailVerificationResponseDto;
 import com.sparta.miniproject.domain.user.entity.EmailVerification;
 import com.sparta.miniproject.domain.user.repository.EmailVerificationRepository;
+import com.sparta.miniproject.global.dto.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.Store;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -24,7 +29,7 @@ public class EmailService {
     // 타임리프를사용하기 위한 객체를 의존성 주입으로 가져온다
     private final SpringTemplateEngine templateEngine;
     private String authNum; //랜덤 인증 코드
-    private final EmailVerificationRepository emailVerificationRepository; // 주입
+    private final EmailVerificationRepository emailVerificationRepository; //EmailVerificationRepository 의존성 주입
 
 
     //랜덤 인증 코드 생성
@@ -32,15 +37,15 @@ public class EmailService {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
 
-        for(int i=0;i<8;i++) {
+        for (int i = 0; i < 8; i++) {
             int index = random.nextInt(3);
 
             switch (index) {
-                case 0 :
-                    key.append((char) ((int)random.nextInt(26) + 97));
+                case 0:
+                    key.append((char) ((int) random.nextInt(26) + 97));
                     break;
                 case 1:
-                    key.append((char) ((int)random.nextInt(26) + 65));
+                    key.append((char) ((int) random.nextInt(26) + 65));
                     break;
                 case 2:
                     key.append(random.nextInt(9));
@@ -97,4 +102,20 @@ public class EmailService {
         return templateEngine.process("mail", context); //mail.html
     }
 
+    public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> emailVerification(EmailVerificationRequestDto emailVerificationRequestDto) {
+
+        String email = emailVerificationRequestDto.getEmail();
+        String authCode = emailVerificationRequestDto.getAuthCode();
+
+        Optional<EmailVerification> emailVerification = emailVerificationRepository.findByEmail(email);
+        if (emailVerification.isPresent()) { //이메일이 존재하면
+            if (emailVerification.get().getVerificationCode().equals(authCode)) { //인증 코드가 일치하면
+                return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(true))); //true 반환
+            } else { //인증 코드가 일치하지 않으면
+                return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(false))); //false 반환
+
+            }
+        } //이메일이 존재하지 않으면
+        return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(false))); //false 반환
+    }
 }
