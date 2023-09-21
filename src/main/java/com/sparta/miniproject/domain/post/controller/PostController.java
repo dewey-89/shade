@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
@@ -22,7 +24,7 @@ public class PostController {
     // 게시글 전체 조회
     @Operation(summary = "게시글 전체 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<String>>> getPost() {
+    public ResponseEntity<ApiResponse<List<PostResponseDto>>> getPost() {
         return postService.getPost();
     }
 
