@@ -13,10 +13,12 @@ import org.apache.catalina.Store;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
@@ -102,20 +104,20 @@ public class EmailService {
         return templateEngine.process("mail", context); //mail.html
     }
 
+    @Transactional
     public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> emailVerification(EmailVerificationRequestDto emailVerificationRequestDto) {
 
         String email = emailVerificationRequestDto.getEmail();
         String authCode = emailVerificationRequestDto.getAuthCode();
 
         Optional<EmailVerification> emailVerification = emailVerificationRepository.findByEmail(email);
-        if (emailVerification.isPresent()) { //이메일이 존재하면
-            if (emailVerification.get().getVerificationCode().equals(authCode)) { //인증 코드가 일치하면
-                return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(true))); //true 반환
-            } else { //인증 코드가 일치하지 않으면
-                return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(false))); //false 반환
+        boolean isVerified = emailVerification
+                .filter(verification -> verification.getVerificationCode().equals(authCode) &&
+                        verification.getExpirationTime().isAfter(LocalDateTime.now()))
+                .isPresent();
 
-            }
-        } //이메일이 존재하지 않으면
-        return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(false))); //false 반환
+        emailVerification.ifPresent(verification -> emailVerificationRepository.deleteByEmail(email));
+
+        return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(isVerified)));
     }
 }
