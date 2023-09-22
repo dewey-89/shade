@@ -1,6 +1,5 @@
 package com.sparta.miniproject.domain.user.service;
 
-import com.sparta.miniproject.domain.user.dto.EmailAuthRequestDto;
 import com.sparta.miniproject.domain.user.dto.EmailVerificationRequestDto;
 import com.sparta.miniproject.domain.user.dto.EmailVerificationResponseDto;
 import com.sparta.miniproject.domain.user.entity.EmailVerification;
@@ -9,9 +8,6 @@ import com.sparta.miniproject.global.dto.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.Store;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,7 +102,7 @@ public class EmailService {
     }
 
     @Transactional
-    public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> emailVerification(EmailVerificationRequestDto emailVerificationRequestDto) {
+    public ApiResponse<EmailVerificationResponseDto> emailVerification(EmailVerificationRequestDto emailVerificationRequestDto) {
 
         String email = emailVerificationRequestDto.getEmail();
         String authCode = emailVerificationRequestDto.getAuthCode();
@@ -120,9 +116,8 @@ public class EmailService {
 
         emailVerification.ifPresent(verification -> emailVerificationRepository.deleteByEmail(email));
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new EmailVerificationResponseDto(isVerified)));
+        return ApiResponse.successData(new EmailVerificationResponseDto(isVerified));
 
-//        return ResponseEntity.ok(ApiResponse.successData(new EmailVerificationResponseDto(isVerified)));
 
     }
 }

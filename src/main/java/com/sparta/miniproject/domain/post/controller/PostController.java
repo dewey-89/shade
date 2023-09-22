@@ -45,7 +45,7 @@ public class PostController {
 
     @Operation(summary = "게시글 수정")
     @PutMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostResponseDto>> updatePost(
+    public ApiResponse<PostResponseDto> updatePost(
             @PathVariable Long postId,
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {

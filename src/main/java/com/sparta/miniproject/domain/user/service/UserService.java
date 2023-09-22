@@ -49,19 +49,19 @@ public class UserService {
         // 회원 중복 확인
         Optional<UserEntity> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
-            throw new CustomException(ErrrorCode.EXIST_DATA);
+            throw new CustomException(ErrrorCode.DUPLICATE_USERNAME);
         }
 
         // 이메일 중복 확인
         Optional<UserEntity> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new CustomException(ErrrorCode.EXIST_DATA);
+            throw new CustomException(ErrrorCode.DUPLICATE_EMAIL);
         }
 
         //닉네임 중복 확인
         Optional<UserEntity> checkNickname = userRepository.findByNickname(nickname);
         if (checkNickname.isPresent()) {
-            throw new CustomException(ErrrorCode.EXIST_DATA);
+            throw new CustomException(ErrrorCode.DUPLICATE_NICKNAME);
         }
 
         // 사용자 ROLE 확인
@@ -77,7 +77,7 @@ public class UserService {
         UserEntity userEntity = new UserEntity(username, password, email, nickname, role);
         userRepository.save(userEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("회원가입이 완료되었습니다."));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.successMessage("회원가입이 완료되었습니다."));
 
     }
 }

@@ -38,9 +38,9 @@ public class PostService {
     }
 
     // 상세 조회
-    public ResponseEntity<ApiResponse<PostResponseDto>> getPostById(Long postId) {
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_ENTITY));
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new PostResponseDto(post)));
+    public ApiResponse<PostResponseDto> getPostById(Long postId) {
+        Post post = postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_POST));
+        return ApiResponse.successData(new PostResponseDto(post));
     }
 
     // 생성
@@ -52,7 +52,7 @@ public class PostService {
 
     // 수정
     @Transactional
-    public ResponseEntity<ApiResponse<PostResponseDto>> updatePost(Long postId, PostRequestDto postRequestDto, UserEntity userEntity) {
+    public ApiResponse<PostResponseDto> updatePost(Long postId, PostRequestDto postRequestDto, UserEntity userEntity) {
         Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
@@ -60,38 +60,38 @@ public class PostService {
             throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
         }
         post.update(postRequestDto, userEntity);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new PostResponseDto(post)));
+        return ApiResponse.successData(new PostResponseDto(post));
 
     }
 
     // 삭제
     @Transactional
-    public ResponseEntity<ApiResponse<String>> deletePost(Long postId, UserEntity userEntity) {
+    public ApiResponse<String> deletePost(Long postId, UserEntity userEntity) {
         Post post = findPost(postId);
 
         // 관리자, 유저 권한 확인
         if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId()))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("삭제 권한이 없습니다"));
+            throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
         }
         postRepository.delete(post);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("게시글이 삭제되었습니다"));
+        return ApiResponse.successMessage("게시글이 삭제되었습니다");
     }
 
     // 게시글 좋아요, 취소
     @Transactional
-    public ResponseEntity<ApiResponse<String>> likePost(Long postId, UserEntity userEntity) {
+    public ApiResponse<String> likePost(Long postId, UserEntity userEntity) {
         Post post = findPost(postId);
         Optional<LikePost> like = likePostRepository.findByPostIdAndUserEntityId(postId, userEntity.getId());
         if (like.isEmpty()) {
             likePostRepository.save(new LikePost(userEntity, post));
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("게시글 좋아요"));
+            return ApiResponse.successMessage("게시글 좋아요");
         }
         likePostRepository.delete(like.get());
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("게시글 취소"));
+        return ApiResponse.successMessage("게시글 취소");
     }
 
     // 검색 메소드
     private Post findPost(Long postId) {
-        return postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_ENTITY));
+        return postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_POST));
     }
 }

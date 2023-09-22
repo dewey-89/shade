@@ -14,8 +14,14 @@ public enum ErrrorCode {
     WRONG_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 토큰입니다."),
 
     NOT_FOUND_ENTITY(HttpStatus.NOT_FOUND, "해당 데이터가 존재하지 않습니다."),
+    NOT_FOUND_POST(HttpStatus.NOT_FOUND, "해당 게시글이 존재하지 않습니다."),
+    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "해당 댓글이 존재하지 않습니다."),
+
     NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
-    EXIST_DATA(HttpStatus.CONFLICT, "이미 존재하는 데이터입니다.");
+
+    DUPLICATE_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.");
 
 
     private final HttpStatus httpStatus;
