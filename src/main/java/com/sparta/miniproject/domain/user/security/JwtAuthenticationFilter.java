@@ -46,14 +46,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override//로그인 성공시 JWT 토큰 생성
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException{
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        String nickname = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getNickname();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
-        String token = jwtUtil.createToken(username, role);
+        String token = jwtUtil.createToken(username, nickname, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
         // JSON으로 변환하여 응답
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonResponse = objectMapper.writeValueAsString(ApiResponse.successMessage("로그인 성공"));
+        String jsonResponse = objectMapper.writeValueAsString(ApiResponse.successMessage(nickname + "님 환영합니다."));
 
         response.setContentType("application/json");//응답 형식 지정
         response.setCharacterEncoding("UTF-8");
