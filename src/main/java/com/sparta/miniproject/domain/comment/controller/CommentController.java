@@ -6,7 +6,6 @@ import com.sparta.miniproject.domain.comment.service.CommentService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
 import com.sparta.miniproject.global.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,7 +18,6 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // 1. 댓글 작성 API
     @Operation(summary = "댓글 작성")
     @PostMapping
     public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
@@ -29,7 +27,6 @@ public class CommentController {
         return commentService.createComment(postId, commentRequestDto, userDetails.getUser());
     }
 
-    // 2. 댓글 수정 API
     @Operation(summary = "댓글 수정")
     @PutMapping("/{commentId}")
     public ResponseEntity<ApiResponse<CommentResponseDto>> updateComment(
@@ -38,7 +35,7 @@ public class CommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.updateComment(commentId, updatedCommentDto, userDetails.getUser());
     }
-    // 3. 댓글 삭제 API
+
     @Operation(summary = "댓글 삭제")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<String>> deleteComment(

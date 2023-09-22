@@ -74,7 +74,7 @@ public class UserService {
         UserEntity userEntity = new UserEntity(username, password, email, nickname, role);
         userRepository.save(userEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("회원가입이 완료되었습니다."));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("회원가입이 완료되었습니다."));
 
     }
 }

@@ -21,8 +21,12 @@ public class ApiResponse<T> {
     }
 
     //성공
-    public static <T> ApiResponse<T> success(T data) {
+    public static <T> ApiResponse<T> successData(T data) {
         return new ApiResponse<>(SUCCESS_STATUS, null, data);
+    }
+
+    public static <T> ApiResponse<T> successMessage(String message) {
+        return new ApiResponse<>(SUCCESS_STATUS, message, null);
     }
 
     //에러

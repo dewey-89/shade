@@ -1,6 +1,8 @@
 package com.sparta.miniproject.domain.user.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.miniproject.domain.user.jwt.JwtUtil;
+import com.sparta.miniproject.global.dto.ApiResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,6 +40,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonResponse = objectMapper.writeValueAsString(ApiResponse.error("토큰이 유효하지 않습니다."));
+
+                res.setCharacterEncoding("UTF-8");
+                res.setContentType("application/json");
+                res.getWriter().write(jsonResponse);
+                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
                 return;
             }
 
