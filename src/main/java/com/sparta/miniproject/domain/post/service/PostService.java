@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -29,22 +28,23 @@ public class PostService {
     private final LikePostRepository likePostRepository;
 
     // 전체 조회
-    public ResponseEntity<ApiResponse<List<PostResponseDto>>> getPost() {
-        List<PostResponseDto> postList = postRepository.findTitles();
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(postList));
+    public ResponseEntity<ApiResponse<Page<PostResponseDto>>> getAllPosts(int page, int size) {
+        Page<Post> postList = postRepository.findAllByOrderByModifiedAtDesc(Pageable.ofSize(size).withPage(page-1));
+        Page<PostResponseDto> postResponseDtos = postList.map(PostResponseDto::new);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(postResponseDtos));
     }
 
     // 상세 조회
     public ResponseEntity<ApiResponse<PostResponseDto>> getPostById(Long postId) {
         Post post = postRepository.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다"));
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new PostResponseDto(post)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new PostResponseDto(post)));
     }
 
     // 생성
     @Transactional
     public ResponseEntity<ApiResponse<PostResponseDto>> createPost(PostRequestDto postRequestDto, UserEntity userEntity) {
         Post post = postRepository.save(new Post(postRequestDto, userEntity));
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new PostResponseDto(post)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new PostResponseDto(post)));
     }
 
     // 수정
@@ -57,7 +57,7 @@ public class PostService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("수정 권한이 없습니다"));
         }
         post.update(postRequestDto, userEntity);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new PostResponseDto(post)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new PostResponseDto(post)));
 
     }
 
@@ -71,7 +71,7 @@ public class PostService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("삭제 권한이 없습니다"));
         }
         postRepository.delete(post);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("게시글이 삭제되었습니다"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("게시글이 삭제되었습니다"));
     }
 
     // 게시글 좋아요, 취소
@@ -81,10 +81,10 @@ public class PostService {
         Optional<LikePost> like = likePostRepository.findByPostIdAndUserEntityId(postId, userEntity.getId());
         if (like.isEmpty()) {
             likePostRepository.save(new LikePost(userEntity, post));
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("게시글 좋아요"));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("게시글 좋아요"));
         }
         likePostRepository.delete(like.get());
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("게시글 취소"));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("게시글 취소"));
     }
 
     // 검색 메소드

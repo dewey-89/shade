@@ -33,29 +33,23 @@ public class CommentService {
 
         commentRepository.save(comment); // 코멘트 저장 후 comment 변수에 저장
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new CommentResponseDto(comment)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new CommentResponseDto(comment)));
     }
 
     // 수정
-        @Transactional
-        public ResponseEntity<ApiResponse<CommentResponseDto>> updateComment(Long commentId, CommentRequestDto commentRequestDto, UserEntity userEntity) {
-            Comment comment = findComment(commentId);
+    @Transactional
+    public ResponseEntity<ApiResponse<CommentResponseDto>> updateComment(Long commentId, CommentRequestDto commentRequestDto, UserEntity userEntity) {
+        Comment comment = findComment(commentId);
 
-            // 댓글 작성자 또는 관리자 권한 확인
-            if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(comment.getUserEntity().getId()))) {
-                throw new RuntimeException("댓글 수정 권한이 없습니다.");
-            }
-
-            comment.updateComment(commentRequestDto);
-            commentRepository.save(comment);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(new CommentResponseDto(comment)));
+        // 댓글 작성자 또는 관리자 권한 확인
+        if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(comment.getUserEntity().getId()))) {
+            throw new RuntimeException("댓글 수정 권한이 없습니다.");
         }
 
-    private Comment findComment(Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+        comment.updateComment(commentRequestDto);
+        commentRepository.save(comment);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new CommentResponseDto(comment)));
     }
-
 
     //삭제
     @Transactional
@@ -68,7 +62,12 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("댓글이 삭제되었습니다."));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successMessage("댓글이 삭제되었습니다."));
+    }
+
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
     }
 
 }
