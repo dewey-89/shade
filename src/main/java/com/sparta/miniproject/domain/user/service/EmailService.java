@@ -110,12 +110,8 @@ public class EmailService {
         String email = emailVerificationRequestDto.getEmail();
         String authCode = emailVerificationRequestDto.getAuthCode();
 
-<<<<<<< HEAD
-        Optional<EmailVerification> emailVerification = emailVerificationRepository.findByEmail(email); //이메일로 EmailVerification 엔터티 조회
-
-=======
         Optional<EmailVerification> emailVerification = emailVerificationRepository.findByEmail(email);
->>>>>>> 28aa2de60ccb5aee869789fdf4f338321a40dfe9
+
         boolean isVerified = emailVerification
                 .filter(verification -> verification.getVerificationCode().equals(authCode) &&
                         verification.getExpirationTime().isAfter(LocalDateTime.now()))
@@ -123,10 +119,6 @@ public class EmailService {
 
         emailVerification.ifPresent(verification -> emailVerificationRepository.deleteByEmail(email));
 
-<<<<<<< HEAD
         return ResponseEntity.ok(ApiResponse.successData(new EmailVerificationResponseDto(isVerified)));
-=======
-        return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(isVerified)));
->>>>>>> 28aa2de60ccb5aee869789fdf4f338321a40dfe9
     }
 }
