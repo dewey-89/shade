@@ -6,6 +6,7 @@ import com.sparta.miniproject.domain.comment.service.CommentService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
 import com.sparta.miniproject.global.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

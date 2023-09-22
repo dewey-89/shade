@@ -20,4 +20,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(ex.getMessage()));
     }
+
+    @ExceptionHandler({CustomException.class})
+    public ResponseEntity<ApiResponse<?>> handleException(CustomException ex) {
+        return ResponseEntity.status(ex.getErrorCode().getHttpStatus())
+                .body(ApiResponse.error(ex.getErrorCode().getMessage()));
+    }
 }

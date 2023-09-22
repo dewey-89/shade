@@ -38,6 +38,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(tokenValue)) {
 
+            if(tokenValue == null || tokenValue.isEmpty()){
+                filterChain.doFilter(req, res);
+                return;
+            }
+
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
 
@@ -63,6 +68,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(req, res);
+        return;
     }
 
     // 인증 처리

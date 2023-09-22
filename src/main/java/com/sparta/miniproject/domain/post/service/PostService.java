@@ -9,6 +9,8 @@ import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.global.dto.ApiResponse;
+import com.sparta.miniproject.global.exception.CustomException;
+import com.sparta.miniproject.global.exception.ErrrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 
@@ -36,7 +39,7 @@ public class PostService {
 
     // 상세 조회
     public ResponseEntity<ApiResponse<PostResponseDto>> getPostById(Long postId) {
-        Post post = postRepository.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다"));
+        Post post = postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_ENTITY));
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new PostResponseDto(post)));
     }
 
@@ -54,7 +57,7 @@ public class PostService {
 
         // 관리자, 유저 권한 확인
         if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(post.getUserEntity().getId()))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("수정 권한이 없습니다"));
+            throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
         }
         post.update(postRequestDto, userEntity);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new PostResponseDto(post)));
@@ -89,6 +92,6 @@ public class PostService {
 
     // 검색 메소드
     private Post findPost(Long postId) {
-        return postRepository.findPostById(postId).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        return postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_ENTITY));
     }
 }

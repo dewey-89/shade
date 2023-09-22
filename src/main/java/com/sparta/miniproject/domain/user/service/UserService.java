@@ -6,6 +6,8 @@ import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.domain.user.repository.EmailVerificationRepository;
 import com.sparta.miniproject.domain.user.repository.UserRepository;
 import com.sparta.miniproject.global.dto.ApiResponse;
+import com.sparta.miniproject.global.exception.CustomException;
+import com.sparta.miniproject.global.exception.ErrrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,26 +49,26 @@ public class UserService {
         // 회원 중복 확인
         Optional<UserEntity> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("중복된 회원이 존재합니다."));
+            throw new CustomException(ErrrorCode.EXIST_DATA);
         }
 
         // 이메일 중복 확인
         Optional<UserEntity> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("중복된 이메일이 존재합니다."));
+            throw new CustomException(ErrrorCode.EXIST_DATA);
         }
 
         //닉네임 중복 확인
         Optional<UserEntity> checkNickname = userRepository.findByNickname(nickname);
         if (checkNickname.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("중복된 닉네임이 존재합니다."));
+            throw new CustomException(ErrrorCode.EXIST_DATA);
         }
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
         if (requestDto.isAdmin()) {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("관리자 토큰이 일치하지 않습니다."));
+                throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
             }
             role = UserRoleEnum.ADMIN;
         }

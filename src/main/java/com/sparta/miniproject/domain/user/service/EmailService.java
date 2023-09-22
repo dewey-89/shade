@@ -10,6 +10,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.Store;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -119,6 +120,9 @@ public class EmailService {
 
         emailVerification.ifPresent(verification -> emailVerificationRepository.deleteByEmail(email));
 
-        return ResponseEntity.ok(ApiResponse.successData(new EmailVerificationResponseDto(isVerified)));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(new EmailVerificationResponseDto(isVerified)));
+
+//        return ResponseEntity.ok(ApiResponse.successData(new EmailVerificationResponseDto(isVerified)));
+
     }
 }

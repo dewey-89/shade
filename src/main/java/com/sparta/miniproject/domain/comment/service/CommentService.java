@@ -9,6 +9,9 @@ import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
 import com.sparta.miniproject.global.dto.ApiResponse;
+import com.sparta.miniproject.global.exception.CustomException;
+import com.sparta.miniproject.global.exception.ErrrorCode;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +29,7 @@ public class CommentService {
     public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(Long postId, CommentRequestDto commentRequestDto, UserEntity userEntity) {
         // 코멘트를 작성할 포스트를 찾음
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("포스트가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_ENTITY));
 
         // 코멘트를 생성하고 저장
         Comment comment = new Comment(commentRequestDto, post, userEntity);
@@ -43,7 +46,7 @@ public class CommentService {
 
         // 댓글 작성자 또는 관리자 권한 확인
         if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(comment.getUserEntity().getId()))) {
-            throw new RuntimeException("댓글 수정 권한이 없습니다.");
+            throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
         }
 
         comment.updateComment(commentRequestDto);
@@ -58,7 +61,7 @@ public class CommentService {
 
         // 댓글 작성자 또는 관리자 권한 확인
         if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(comment.getUserEntity().getId()))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("댓글 삭제 권한이 없습니다."));
+           throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
         }
 
         commentRepository.delete(comment);
@@ -67,7 +70,7 @@ public class CommentService {
 
     private Comment findComment(Long commentId) {
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_ENTITY));
     }
 
 }
