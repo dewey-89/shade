@@ -31,10 +31,10 @@ public class PostService {
     private final LikePostRepository likePostRepository;
 
     // 전체 조회
-    public ResponseEntity<ApiResponse<Page<PostResponseDto>>> getAllPosts(int page, int size) {
+    public ApiResponse<Page<PostResponseDto>> getAllPosts(int page, int size) {
         Page<Post> postList = postRepository.findAllByOrderByModifiedAtDesc(Pageable.ofSize(size).withPage(page-1));
         Page<PostResponseDto> postResponseDtos = postList.map(PostResponseDto::new);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.successData(postResponseDtos));
+        return ApiResponse.successData(postResponseDtos);
     }
 
     // 상세 조회

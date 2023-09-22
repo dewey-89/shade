@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/emailVerification") // 이메일 인증 코드 확인
-    public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> emailVerification(@RequestBody EmailVerificationRequestDto emailVerificationRequestDto) {
+    public ApiResponse<EmailVerificationResponseDto> emailVerification(@RequestBody EmailVerificationRequestDto emailVerificationRequestDto) {
         return emailService.emailVerification(emailVerificationRequestDto);
     }
 

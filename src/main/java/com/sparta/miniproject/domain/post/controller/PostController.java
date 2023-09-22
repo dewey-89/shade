@@ -22,16 +22,16 @@ public class PostController {
 
     @Operation(summary = "게시글 전체 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<PostResponseDto>>> getAllPosts(
-            @PathParam("page") int page,
-            @PathParam("size") int size
+    public ApiResponse<Page<PostResponseDto>> getAllPosts(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size
     ){
         return postService.getAllPosts(page, size);
     }
 
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostResponseDto>> getPostById(@PathVariable Long postId) {
+    public ApiResponse<PostResponseDto> getPostById(@PathVariable Long postId) {
         return postService.getPostById(postId);
     }
 
@@ -54,7 +54,7 @@ public class PostController {
 
     @Operation(summary = "게시글 삭제")
     @DeleteMapping("/{postId}")
-    public ResponseEntity<ApiResponse<String>> deletePost(
+    public ApiResponse<String> deletePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.deletePost(postId, userDetails.getUser());
@@ -62,7 +62,7 @@ public class PostController {
 
     @Operation(summary = "게시글 좋아요/취소")
     @PutMapping("/{postId}/like")
-    public ResponseEntity<ApiResponse<String>> likePost(
+    public ApiResponse<String> likePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.likePost(postId, userDetails.getUser());
