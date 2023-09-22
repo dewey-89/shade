@@ -1,6 +1,8 @@
 package com.sparta.miniproject.domain.user.controller;
 
 import com.sparta.miniproject.domain.user.dto.EmailAuthRequestDto;
+import com.sparta.miniproject.domain.user.dto.EmailVerificationRequestDto;
+import com.sparta.miniproject.domain.user.dto.EmailVerificationResponseDto;
 import com.sparta.miniproject.domain.user.dto.SignupRequestDto;
 import com.sparta.miniproject.domain.user.service.EmailService;
 import com.sparta.miniproject.domain.user.service.UserService;
@@ -11,10 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 
@@ -33,11 +32,16 @@ public class UserController {
         return userService.signup(signupRequestDto,bindingResult);
     }
 
-    @PostMapping("/mailConfirm")
+    @PostMapping("/emailsend") // 이메일 인증 코드 전송
     public String mailConfirm(@RequestBody EmailAuthRequestDto emailDto) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = emailService.sendEmail(emailDto.getEmail());
         return authCode;
+    }
+
+    @PostMapping("/emailVerification") // 이메일 인증 코드 확인
+    public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> emailVerification(@RequestBody EmailVerificationRequestDto emailVerificationRequestDto) {
+        return emailService.emailVerification(emailVerificationRequestDto);
     }
 
 }

@@ -1,14 +1,25 @@
 package com.sparta.miniproject.domain.user.service;
 
+import com.sparta.miniproject.domain.user.dto.EmailAuthRequestDto;
+import com.sparta.miniproject.domain.user.dto.EmailVerificationRequestDto;
+import com.sparta.miniproject.domain.user.dto.EmailVerificationResponseDto;
+import com.sparta.miniproject.domain.user.entity.EmailVerification;
+import com.sparta.miniproject.domain.user.repository.EmailVerificationRepository;
+import com.sparta.miniproject.global.dto.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.Store;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -20,21 +31,23 @@ public class EmailService {
     // 타임리프를사용하기 위한 객체를 의존성 주입으로 가져온다
     private final SpringTemplateEngine templateEngine;
     private String authNum; //랜덤 인증 코드
+    private final EmailVerificationRepository emailVerificationRepository; //EmailVerificationRepository 의존성 주입
+
 
     //랜덤 인증 코드 생성
     public void createCode() {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
 
-        for(int i=0;i<8;i++) {
+        for (int i = 0; i < 8; i++) {
             int index = random.nextInt(3);
 
             switch (index) {
-                case 0 :
-                    key.append((char) ((int)random.nextInt(26) + 97));
+                case 0:
+                    key.append((char) ((int) random.nextInt(26) + 97));
                     break;
                 case 1:
-                    key.append((char) ((int)random.nextInt(26) + 65));
+                    key.append((char) ((int) random.nextInt(26) + 65));
                     break;
                 case 2:
                     key.append(random.nextInt(9));
@@ -44,19 +57,31 @@ public class EmailService {
         authNum = key.toString();
     }
 
+
+    // EmailVerification 엔터티 생성 및 저장하는 메서드
+    private void saveEmailVerification(String email, String verificationCode) {
+        EmailVerification emailVerification = new EmailVerification(email, verificationCode);
+        emailVerificationRepository.save(emailVerification);
+    }
+
+
     //메일 양식 작성
     public MimeMessage createEmailForm(String email) throws MessagingException, UnsupportedEncodingException {
 
         createCode(); //인증 코드 생성
-        String setFrom = "ksw270@gmail.com"; //email-config에 설정한 자신의 이메일 주소(보내는 사람)
+        String setFrom = "jaeha0183@gmail.com"; //email-config에 설정한 자신의 이메일 주소(보내는 사람)
         String toEmail = email; //받는 사람
-        String title = "칸반보드 회원가입 인증 번호"; //제목
+        String title = "CODEBOX 회원가입 인증 번호"; //제목
 
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email); //보낼 이메일 설정
         message.setSubject(title); //제목 설정
         message.setFrom(setFrom); //보내는 이메일
         message.setText(setContext(authNum), "utf-8", "html");
+
+        // EmailVerification 엔터티 생성 및 저장
+        saveEmailVerification(email, authNum);
+
 
         return message;
     }
@@ -79,4 +104,29 @@ public class EmailService {
         return templateEngine.process("mail", context); //mail.html
     }
 
+    @Transactional
+    public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> emailVerification(EmailVerificationRequestDto emailVerificationRequestDto) {
+
+        String email = emailVerificationRequestDto.getEmail();
+        String authCode = emailVerificationRequestDto.getAuthCode();
+
+<<<<<<< HEAD
+        Optional<EmailVerification> emailVerification = emailVerificationRepository.findByEmail(email); //이메일로 EmailVerification 엔터티 조회
+
+=======
+        Optional<EmailVerification> emailVerification = emailVerificationRepository.findByEmail(email);
+>>>>>>> 28aa2de60ccb5aee869789fdf4f338321a40dfe9
+        boolean isVerified = emailVerification
+                .filter(verification -> verification.getVerificationCode().equals(authCode) &&
+                        verification.getExpirationTime().isAfter(LocalDateTime.now()))
+                .isPresent();
+
+        emailVerification.ifPresent(verification -> emailVerificationRepository.deleteByEmail(email));
+
+<<<<<<< HEAD
+        return ResponseEntity.ok(ApiResponse.successData(new EmailVerificationResponseDto(isVerified)));
+=======
+        return ResponseEntity.ok(ApiResponse.success(new EmailVerificationResponseDto(isVerified)));
+>>>>>>> 28aa2de60ccb5aee869789fdf4f338321a40dfe9
+    }
 }
