@@ -7,7 +7,7 @@ import com.sparta.miniproject.domain.comment.repository.CommentRepository;
 import com.sparta.miniproject.domain.post.entity.Post;
 import com.sparta.miniproject.domain.post.repository.PostRepository;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
-import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
+import com.sparta.miniproject.domain.user.util.AuthorizationUtils;
 import com.sparta.miniproject.global.dto.ApiResponse;
 import com.sparta.miniproject.global.exception.CustomException;
 import com.sparta.miniproject.global.exception.ErrrorCode;
@@ -24,14 +24,12 @@ public class CommentService {
     private final PostRepository postRepository;
 
     public ApiResponse<CommentResponseDto> createComment(Long postId, CommentRequestDto commentRequestDto, UserEntity userEntity) {
-        // 코멘트를 작성할 포스트를 찾음
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_POST));
 
-        // 코멘트를 생성하고 저장
+        Post post = postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_POST));
+
         Comment comment = new Comment(commentRequestDto, post, userEntity);
 
-        commentRepository.save(comment); // 코멘트 저장 후 comment 변수에 저장
+        commentRepository.save(comment);
 
         return ApiResponse.successData(new CommentResponseDto(comment));
     }
@@ -41,13 +39,11 @@ public class CommentService {
     public ApiResponse<CommentResponseDto> updateComment(Long commentId, CommentRequestDto commentRequestDto, UserEntity userEntity) {
         Comment comment = findComment(commentId);
 
-        // 댓글 작성자 또는 관리자 권한 확인
-        if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(comment.getUserEntity().getId()))) {
+        if (!AuthorizationUtils.isAuthorized(userEntity, comment.getUserEntity())) {
             throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
         }
 
         comment.updateComment(commentRequestDto);
-        commentRepository.save(comment);
         return ApiResponse.successData(new CommentResponseDto(comment));
     }
 
@@ -57,8 +53,8 @@ public class CommentService {
         Comment comment = findComment(commentId);
 
         // 댓글 작성자 또는 관리자 권한 확인
-        if (!(userEntity.getRole().equals(UserRoleEnum.ADMIN) || userEntity.getId().equals(comment.getUserEntity().getId()))) {
-           throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
+        if (!AuthorizationUtils.isAuthorized(userEntity, comment.getUserEntity())) {
+            throw new CustomException(ErrrorCode.NOT_AUTHORIZED);
         }
 
         commentRepository.delete(comment);

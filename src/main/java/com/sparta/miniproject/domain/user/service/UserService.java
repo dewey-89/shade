@@ -3,7 +3,6 @@ package com.sparta.miniproject.domain.user.service;
 import com.sparta.miniproject.domain.user.dto.SignupRequestDto;
 import com.sparta.miniproject.domain.user.entity.UserEntity;
 import com.sparta.miniproject.domain.user.entity.UserRoleEnum;
-import com.sparta.miniproject.domain.user.repository.EmailVerificationRepository;
 import com.sparta.miniproject.domain.user.repository.UserRepository;
 import com.sparta.miniproject.global.dto.ApiResponse;
 import com.sparta.miniproject.global.exception.CustomException;

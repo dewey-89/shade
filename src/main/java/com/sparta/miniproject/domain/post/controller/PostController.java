@@ -6,10 +6,8 @@ import com.sparta.miniproject.domain.post.service.PostService;
 import com.sparta.miniproject.domain.user.security.UserDetailsImpl;
 import com.sparta.miniproject.global.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +35,7 @@ public class PostController {
 
     @Operation(summary = "게시글 작성")
     @PostMapping
-    public ResponseEntity<ApiResponse<PostResponseDto>> createPost(
+    public ApiResponse<PostResponseDto> createPost(
             @RequestBody PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.createPost(postRequestDto, userDetails.getUser());
@@ -62,9 +60,9 @@ public class PostController {
 
     @Operation(summary = "게시글 좋아요/취소")
     @PutMapping("/{postId}/like")
-    public ApiResponse<String> likePost(
+    public ApiResponse<String> togglePostLike(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.likePost(postId, userDetails.getUser());
+        return postService.togglePostLike(postId, userDetails.getUser());
     }
 }
