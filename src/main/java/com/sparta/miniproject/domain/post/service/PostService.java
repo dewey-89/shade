@@ -27,6 +27,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final LikePostRepository likePostRepository;
 
+
     public ApiResponse<Page<PostResponseDto>> getAllPosts(int page, int size) {
         Page<Post> postList = postRepository.findAllByOrderByModifiedAtDesc(Pageable.ofSize(size).withPage(page-1));
         Page<PostResponseDto> postResponseDtos = postList.map(PostResponseDto::new);

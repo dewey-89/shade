@@ -23,6 +23,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
+
     public ApiResponse<CommentResponseDto> createComment(Long postId, CommentRequestDto commentRequestDto, UserEntity userEntity) {
 
         Post post = postRepository.findPostById(postId).orElseThrow(() -> new CustomException(ErrrorCode.NOT_FOUND_POST));
