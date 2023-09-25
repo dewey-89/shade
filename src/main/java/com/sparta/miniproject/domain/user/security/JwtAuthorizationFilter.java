@@ -36,12 +36,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 
-        if (StringUtils.hasText(tokenValue)) {
+        if(tokenValue == null || tokenValue.isEmpty()){
+            filterChain.doFilter(req, res);
+            return;
+        }
 
-            if(tokenValue == null || tokenValue.isEmpty()){
-                filterChain.doFilter(req, res);
-                return;
-            }
+        if (StringUtils.hasText(tokenValue)) {
 
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
@@ -68,7 +68,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(req, res);
-        return;
     }
 
     // 인증 처리
