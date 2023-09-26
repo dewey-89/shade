@@ -29,7 +29,7 @@ public class PostService {
 
 
     public ApiResponse<Page<PostResponseDto>> getAllPosts(int page, int size) {
-        Page<Post> postList = postRepository.findAllByOrderByModifiedAtDesc(Pageable.ofSize(size).withPage(page-1));
+        Page<Post> postList = postRepository.findAllByOrderByModifiedAtDesc(Pageable.ofSize(size).withPage(page));
         Page<PostResponseDto> postResponseDtos = postList.map(PostResponseDto::new);
         return ApiResponse.successData(postResponseDtos);
     }

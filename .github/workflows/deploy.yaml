@@ -1,0 +1,50 @@
+name: Deploy to cloudtype
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: jaeha0183/sparta-mini-project
+          stage: main
+          yaml: >
+            name: sparta-mini-project
+
+            app: java@17
+
+            options:
+              ports: 8080
+              env:
+                - name: ADMIN_TOKEN
+                  value: AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC
+                - name: DB_PASSWORD
+                  value: tjqltm6wh
+                - name: DB_URL
+                  value: jdbc:mysql://mini-database.cdimtnvaowvm.ap-northeast-2.rds.amazonaws.com:3306/mini
+                - name: DB_USERNAME
+                  value: admin
+                - name: EMAIL_PASSWORD
+                  value: rekr xryb maln fazr
+                - name: EMAIL_USERNAME
+                  value: jaeha0183@gmail.com
+                - name: JWT_SECRET_KEY
+                  value: 7Iqk7YyM66W07YOA7L2U65Sp7YG065+9U3ByaW5n6rCV7J2Y7Yqc7YSw7LWc7JuQ67mI7J6F64uI64ukLg==
+                - name: SPRING_PROFILES_ACTIVE
+                  value: ""
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
