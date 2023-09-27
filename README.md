@@ -16,9 +16,6 @@ https://mini-project-b8xs3zwbg-goyka.vercel.app/
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
 <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 
-## API 명세서
-https://aquamarine-laugh-515.notion.site/fa59c54bb3d04ac2bcc16c0e579711b0?v=e296ec2150114fbcb80b5b53ed56ee3c&pvs=4
-
 ## 개발 환경
 
 🖱Backend
@@ -33,11 +30,26 @@ https://aquamarine-laugh-515.notion.site/fa59c54bb3d04ac2bcc16c0e579711b0?v=e296
 * cloudtype
 * github Action
 
+## 서비스 아키텍처
+![system](https://github.com/dewey-89/sparta-mini-project/assets/140939516/23b6c316-88b0-4940-b76b-32c0b8945fa5)
+
+
+## API 명세서
+https://aquamarine-laugh-515.notion.site/fa59c54bb3d04ac2bcc16c0e579711b0?v=e296ec2150114fbcb80b5b53ed56ee3c&pvs=4
+
+## ERD
+<img width="927" alt="스크린샷 2023-09-19 오전 11 16 30" src="https://github.com/dewey-89/sparta-mini-project/assets/140939516/7257e7ec-c1ca-4e29-941b-cbd480ff558f">
+
+<img width="326" alt="스크린샷 2023-09-27 오후 2 30 06" src="https://github.com/dewey-89/sparta-mini-project/assets/140939516/b12216e8-dff3-454f-8e57-16b02f5026e3">
+
+
+
+
 ## custom 예외처리 메시지
 <img width="1261" alt="스크린샷 2023-09-27 오후 1 32 20" src="https://github.com/dewey-89/sparta-mini-project/assets/140939516/2d8430a1-c6d9-488d-8abb-08a8862e18c8">
 
 ## 트러블 슈팅
-**문제상황:**
+✨**문제상황:**
 프론트엔드와 백엔드 간에 서로 다른 형식의 응답 메시지가 전송되어 프론트엔드에서 응답을 올바르게 처리하지 못하는 문제가 발생했습니다.
 
 **해결방법:**
@@ -52,7 +64,7 @@ https://aquamarine-laugh-515.notion.site/fa59c54bb3d04ac2bcc16c0e579711b0?v=e296
 
 ---
 
-**문제 상황** : 코드 수정 전, 토큰의 유효성을 검사하고 토큰이 유효하지 않을 경우 로그에 "Token Error"를 출력하고 메서드를 종료하는데, 프론트엔드에게는 명확한 오류 응답이 제공되지 않아 프론트엔드는 토큰 오류를 파악하기 어려웠습니다.
+✨**문제 상황** : 코드 수정 전, 토큰의 유효성을 검사하고 토큰이 유효하지 않을 경우 로그에 "Token Error"를 출력하고 메서드를 종료하는데, 프론트엔드에게는 명확한 오류 응답이 제공되지 않아 프론트엔드는 토큰 오류를 파악하기 어려웠습니다.
 
 **해결 방법** :
 
