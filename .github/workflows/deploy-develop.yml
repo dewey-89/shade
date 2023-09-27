@@ -1,0 +1,48 @@
+name: Deploy to cloudtype
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: ksw270/mini-project
+          stage: main
+          yaml: |
+            name: sparta-mini-project
+            app: java@17
+            options:
+              ports: 8080
+              env:
+                - name: ADMIN_TOKEN
+                  var: ADMIN_TOKEN
+                - name: DB_PASSWORD
+                  var: DB_PASSWORD
+                - name: DB_URL
+                  var: DB_URL
+                - name: DB_USERNAME
+                  var: DB_USERNAME
+                - name: JWT_SECRET_KEY
+                  var: JWT_SECRET_KEY
+                - name: EMAIL_PASSWORD
+                  var: EMAIL_PASSWORD
+                - name: EMAIL_USERNAME
+                  var: EMAIL_USERNAME
+                - name: SPRING_PROFILES_ACTIVE
+                  value: ""
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}

@@ -1,0 +1,49 @@
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: ${DB_USERNAME}
+#    url: ${DB_URL}
+#    password: ${DB_PASSWORD}
+#
+#  jpa:
+#    properties:
+#      hibernate:
+#        format_sql: 'true'
+#        use_sql_comments: 'true'
+#        show_sql: 'true'
+#    hibernate:
+#      ddl-auto: update
+
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    url: ${DB_URL}
+    password: ${DB_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+        use_sql_comments: 'true'
+        show_sql: 'true'
+    hibernate:
+      ddl-auto: update
+  mail:
+    # Google smtp server ??
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+admin:
+  token: ${ADMIN_TOKEN}
+
