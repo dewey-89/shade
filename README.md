@@ -82,4 +82,4 @@ https://aquamarine-laugh-515.notion.site/fa59c54bb3d04ac2bcc16c0e579711b0?v=e296
 - 박나원 : https://github.com/Hewllpark
 
 ## 프론트엔트 팀 github Repo
-https://github.com/Goyka/mini-project-SHADE-FE
+https://github.com/Goyka/mini-project-SHADE-FE-
