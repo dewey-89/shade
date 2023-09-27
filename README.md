@@ -5,7 +5,7 @@
 팀 프로젝트 고민, 개발자로 잘 성장할 수 있을까에 대한 고민, 면대 면으로 나눌 수 없는 사소한 이야기들을 공유해요!
 
 ## URL
-https://mini-project-b8xs3zwbg-goyka.vercel.app/
+https://mini-project-l76lk5tvn-goyka.vercel.app/
 
 ## 기술 스택
 
