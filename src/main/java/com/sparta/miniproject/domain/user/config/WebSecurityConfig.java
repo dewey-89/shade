@@ -57,7 +57,7 @@ public class WebSecurityConfig{
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList("https://mini-project-fe-git-additional-dev-goyka.vercel.app", "https://mini-project-b8xs3zwbg-goyka.vercel.app", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("https://mini-project-l76lk5tvn-goyka.vercel.app", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "Access-Control-Allow-Origin"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
